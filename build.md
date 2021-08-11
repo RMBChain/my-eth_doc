@@ -18,8 +18,8 @@ git config user.name
 
 ## go proxy
 ```
-GOPROXY=https://mirrors.aliyun.com/goproxy
-GOPROXY=https://goproxy.cn
+export GOPROXY=https://mirrors.aliyun.com/goproxy
+export GOPROXY=https://goproxy.cn
 ```
 
 ## 编译 geth
