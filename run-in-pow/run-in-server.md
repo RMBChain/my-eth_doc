@@ -19,32 +19,32 @@ nohup ./bootnode -nodekey bootnode.key -addr 172.21.117.54:33333 >> bootnode.log
 enode://13cb0c6dfb44dba984f4c2ecd5da797a0f74016fc7ca06ce3e8e6673cdeda0a9be0a71d2657a91fe97ffd26e3e879dda7aed299985e597997a3081f37d71c015@172.21.117.54:0?discport=33333
 ## 启动私链
 ```
+docker stop geth_pow
 docker rm -f geth_pow
-rm -r /my-eth-data/
+rm -r /my-eth/data/
 rm -r /root/.ethereum
-cd /my-eth
+cd /my-eth/chain
 chmod 777 *
 
-/my-eth/geth --datadir /my-eth-data init /my-eth/genesis_pow.json
-
 // 39.105.18.23
+docker rm -f geth_pow
+cd /my-eth/chain
 docker run -d --cpus="1.5" --restart always   --name geth_pow  --ipc=host  --net host  --hostname geth_pow  \
-       -v /my-eth/:/my-eth/ -v /my-eth-data/:/my-eth-data/ -w /my-eth -v /etc/localtime:/etc/localtime:ro   \
-       --entrypoint "/my-eth/run-chain.sh" ubuntu:18.04
+       -v /my-eth/chain:/my-eth/chain -v /my-eth/data/:/my-eth/data/ -w /my-eth/chain -v /etc/localtime:/etc/localtime:ro   \
+       --entrypoint "/my-eth/chain/run-chain.sh" ubuntu:18.04
+docker logs -f  geth_pow
 
-docker run -it -d --cpus="1.5" --restart always   --name geth_pow  --ipc=host  --net host  --hostname geth_pow \
-       -v /my-eth/:/my-eth/ -v /my-eth-data/:/my-eth-data/ -w /my-eth -v /etc/localtime:/etc/localtime:ro  \
-       ubuntu:18.04 bash
-       
-docker exec -it geth_pow bash
+/my-eth/chain/geth attach ipc:/my-eth/data/geth.ipc
+            
+docker exec -it geth_pow bash "ll /my-eth/data"
        
 cp node1-0x85564bfb7d913cc7ca84f3b325cdf239b950c3f5-39.105.18.23.json   /my-eth-data/keystore/
 cp node2-0xc65bc7f6de6c366d48d531d57bb7f41d79a63a69-39.105.153.126.json /my-eth-data/keystore/   
-docker restart geth_pow
+docker start geth_pow
 docker logs -f  geth_pow
 
 docker exec -it geth_pow bash
-docker exec -it geth_pow ./geth attach ipc:/my-eth-data/geth.ipc
+docker exec -it geth_pow ./geth attach ipc:/my-eth/data/geth.ipc
 
 docker exec -it geth_pow bash
 cp node1-0x85564bfb7d913cc7ca84f3b325cdf239b950c3f5-39.105.18.23.json   /my-eth-data/keystore/
